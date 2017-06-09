@@ -69,11 +69,27 @@ listMatches(pattern: "hello\\w+", inString: wordExample)
 
 /**
  \d matches a numeric digit, which in most cases means [0-9]. \d\d?:\d\d will match strings in time format, such as "9:30" and "12:45".
+ \d 匹配数字，大部分情况下是[0-9]。\d\d?:\d\d会匹配时间格式的字符串，比如”9：30“和”12：45“。
  */
 let digitExample = "9:30 12:45 df:24 ag:gh"
 listMatches(pattern: "\\d?\\d:\\d\\d", inString: digitExample)
 
 /**
+ \b matches word boundary characters such as spaces and punctuation. to\b will match the "to" in "to the moon" and "to!", but it will not match "tomorrow". \b is handy for "whole word" type matching.
+ \b 匹配额外的字符，例如空格，标点符号。to\b 会匹配”to the moon”和“to!”中得“to”,但是不会匹配“tomorrow”。\b 用在整个单词的匹配方面和方便。
+ */
+let boundaryExample = "to the moon! when to go? tomorrow?"
+listMatches(pattern: "to\\b", inString: boundaryExample)
+
+/**
+ \s matches whitespace characters such as spaces, tabs, and newlines. hello\s will match "hello " in "Well, hello there!".
+ \s 会匹配空白字符，比如，空格，制表符，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
+ */
+let whitespaceExample = "Well, hello there!"
+listMatches(pattern: "hello\\s", inString: whitespaceExample)
+
+
+/**
  
  */
 
@@ -81,6 +97,25 @@ listMatches(pattern: "\\d?\\d:\\d\\d", inString: digitExample)
 /**
  
  */
+
+
+/**
+ 
+ */
+
+
+/**
+ 
+ */
+
+
+/**
+ 
+ */
+
+
+
+
 
 
 
