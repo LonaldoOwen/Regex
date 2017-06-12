@@ -121,10 +121,11 @@ for string in tdResult {
 }
 print("newtdResult: \(newtdResult)")
 
-let tdEnglishString = "<td><a href=\"/wiki/CD\" title=\"CD\">CD</a></td>"
-let tdEnglishPattern = ">\\w+<"
+//let tdEnglishString = "<td><a href=\"/wiki/CD\" title=\"CD\">CD</a></td>"
+let tdEnglishString = "<td><a href=\"/w/index.php?title=Call_Date&amp;action=edit\" class=\"new\" title=\"Call Date\">Call Date</a></td>"
+let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<"
 let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
-let wordPattern = "\\w*+"
+let wordPattern = "[^>].*[^<]"
 let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
 
 // 无序去重
