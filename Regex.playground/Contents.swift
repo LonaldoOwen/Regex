@@ -121,6 +121,12 @@ for string in tdResult {
 }
 print("newtdResult: \(newtdResult)")
 
+let tdEnglishString = "<td><a href=\"/wiki/CD\" title=\"CD\">CD</a></td>"
+let tdEnglishPattern = ">\\w+<"
+let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
+let wordPattern = "\\w*+"
+let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
+
 // 无序去重
 var tempArray: [String] = ["a", "b", "b", "c", "d", "d"]
 var tempDic: [String: String] = [:]
