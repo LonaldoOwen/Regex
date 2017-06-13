@@ -102,7 +102,8 @@ let htmlString = "<tr>\n<th>英文术语</th><th>中文翻译</th><th>详细解�
 //let pattern = "<(table)[^>]*>(.*?)</\\1>"
 //let pattern = "<(table)\\b class=\"wikitable\">"
 // 注意html标签是有换行的（\n），正则匹配时要注意
-let trPattern = "<(tr)>([\\s\\S]*?)</\\1>"
+//let trPattern = "<(tr)>([\\s\\S]*?)</\\1>"
+let trPattern = ">(.+?)<"
 listMatches(pattern: trPattern, inString: htmlString)
 // 处理第二个td
 let tdChineseString = "<td><a href=\"/wiki/%E5%AD%98%E6%AC%BE%E8%AF%81\" title=\"存款证\">存款证</a></td>"
@@ -140,16 +141,18 @@ print("newtdResult: \(newtdResult)")
 let tdEnglishString = "<td>CFA 协会]](CFA Institute)]](前身是AIMR(Association for Investment Management and Research)，于2004年五月正式易名)颁发的专业称号，用以证实<a href=\"/wiki/%E6%8A%95%E8%B5%84\" title=\"投资\">投资</a>专业人士的实力及<a href=\"/wiki/%E8%AF%9A%E4%BF%A1\" title=\"诚信\">诚信</a>。应考生必须通过三级考试，考核的范围包括道德与专业标准、投资工具、<a href=\"/wiki/%E8%B5%84%E4%BA%A7\" title=\"资产\">资产</a>估值及<a href=\"/wiki/%E6%8A%95%E8%B5%84%E7%BB%84%E5%90%88%E7%AE%A1%E7%90%86\" title=\"投资组合管理\">投资组合管理</a>。</td>"
 //let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<" //只能匹配两个单词
 //let tdEnglishPattern = ">[([(\\w+（）)、，-])(\\s+)]+<"  //匹配多个单词，包含连接符（-）
-let tdEnglishPattern = ">(.*?)<" // 匹配><之间的所有字符
+//let tdEnglishPattern = ">(.*?)<" // 匹配><之间的所有字符
+let tdEnglishPattern = "(?<=>)(.*?)(?=<)" // 匹配><之间的所有字符
 let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
-let wordPattern = "[^>].*[^<]"
-let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
+//let wordPattern = "[^>].*[^<]"
+//let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
 
 // ???
 //let tdString = "<td><a href=\"/w/index.php?title=%E9%80%89%E5%87%BA%E6%9C%80%E6%9C%89%E5%88%A9%E7%9A%84%EF%BC%88%E6%8A%95%E8%B5%84%E7%AD%89%EF%BC%89&amp;action=edit\" class=\"new\" title=\"选出最有利的（投资等）\">选出最有利的（投资等）</a></td>"
 let tdString = ">及<"
 //let tdPattern = "[^>][([(\\w+（）)，-])(\\s+)]+[^<]"
-let tdPattern = "[^>].*[^<]" //"[^>].*[^<]"无法匹配">及<"???
+//let tdPattern = "[^>].*[^<]" //"[^>].*[^<]"无法匹配">及<"???
+let tdPattern = "(?<=>).*(?=<)"
 let tdResult = listMatches(pattern: tdPattern, inString: tdString)
 
 // 无序去重
@@ -207,7 +210,7 @@ listMatches(pattern: "to\\b", inString: boundaryExample)
  \s matches whitespace characters such as spaces, tabs, and newlines. hello\s will match "hello " in "Well, hello there!".
  \s 会匹配空白字符，比如，空格，制表符，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
  */
-let whitespaceExample = "Well, helloWorld, hello-World, hello there! hello! hello。。。<>《》"
+let whitespaceExample = "Well, helloWorld, hello-World, hello there! hello! hello。。。<>《》hello\n"
 listMatches(pattern: "hello\\s", inString: whitespaceExample)
 let SPattern = "hello\\S*"
 listMatches(pattern: SPattern, inString: whitespaceExample)
