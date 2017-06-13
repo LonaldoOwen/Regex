@@ -105,33 +105,44 @@ let htmlString = "<tr>\n<th>英文术语</th><th>中文翻译</th><th>详细解�
 let trPattern = "<(tr)>([\\s\\S]*?)</\\1>"
 listMatches(pattern: trPattern, inString: htmlString)
 //
-let tdString = "<td>持有人可收取<a href=\"/wiki/%E5%88%A9%E6%81%AF\" title=\"利息\">利息</a>的存款证书。存款证设有到期日、<a href=\"/wiki/%E5%9B%BA%E5%AE%9A%E5%88%A9%E7%8E%87\" title=\"固定利率\">固定利率</a>，并可以用任何<a href=\"/wiki/%E8%B4%A7%E5%B8%81\" title=\"货币\">货币</a>计价。存款证一般由<a href=\"/wiki/%E5%95%86%E4%B8%9A%E9%93%B6%E8%A1%8C\" title=\"商业银行\">商业银行</a>发行</td>"
-//let tdString = "<td><a href=\"/wiki/%E5%AD%98%E6%AC%BE%E8%AF%81\" title=\"存款证\">存款证</a></td>"
+let tdChineseString = "<td><a href=\"/wiki/%E5%AD%98%E6%AC%BE%E8%AF%81\" title=\"存款证\">存款证</a></td>"
 
-//let tdPattern = "[\u{4e00}-\u{9fa5}]+" // 匹配中文可行
-let tdPattern = "[\u{4e00}-\u{9fa5}]+([，。、；]*)[\u{4e00}-\u{9fa5}]+" // 匹配中文+标点符号
+let tdChinesePattern = "[\u{4e00}-\u{9fa5}]+" // 匹配中文可行
+let tdChineseResult = listMatches(pattern: tdChinesePattern, inString: tdChineseString)
+
+let tdExplainString = "<td>持有人可收取<a href=\"/wiki/%E5%88%A9%E6%81%AF\" title=\"利息\">利息</a>的存款证书。存款证设有到期日、<a href=\"/wiki/%E5%9B%BA%E5%AE%9A%E5%88%A9%E7%8E%87\" title=\"固定利率\">固定利率</a>，并可以用任何<a href=\"/wiki/%E8%B4%A7%E5%B8%81\" title=\"货币\">货币</a>计价。存款证一般由<a href=\"/wiki/%E5%95%86%E4%B8%9A%E9%93%B6%E8%A1%8C\" title=\"商业银行\">商业银行</a>发行</td>"
 //let tdPattern = "<([a-z][a-z0-9]*)\\b[^>]*>([\u{4e00}-\u{9fa5}]+)</\\1>"
 //let tdPattern = "<(\\S*?)[^>]*>.*?</>|<.*? />"
-let tdResult = listMatches(pattern: tdPattern, inString: tdString)
+let tdExplainPattern = "[\u{4e00}-\u{9fa5}]+([，。、；]*)[\u{4e00}-\u{9fa5}]+" // 匹配中文+标点符号
+let tdExplainResult = listMatches(pattern: tdExplainPattern, inString: tdExplainString)
 var newtdResult: [String] = []
-for string in tdResult {
+for string in tdExplainResult {
     if newtdResult.contains(string) == false {
         newtdResult.append(string)
     }
 }
 print("newtdResult: \(newtdResult)")
 
-//let tdEnglishString = "<td><a href=\"/wiki/CD\" title=\"CD\">CD</a></td>"
-let tdEnglishString = "<td><a href=\"/w/index.php?title=Call_Date&amp;action=edit\" class=\"new\" title=\"Call Date\">Call Date</a></td>"
-let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<"
+//let tdEnglishString = "<td><a href=\"/w/index.php?title=CEDEL&amp;action=edit\" class=\"new\" title=\"CEDEL\">CEDEL</a></td>"
+//let tdEnglishString = "<td><a href=\"/w/index.php?title=Call_Loan_Rate&amp;action=edit\" class=\"new\" title=\"Call Loan Rate\">Call Loan Rate (Call-Loan Rate)</a></td>"
+//let tdEnglishString = "<td><a href=\"/w/index.php?title=%E6%80%BB%E8%B5%84%E6%9C%AC%EF%BC%8C%E6%80%BB%E5%B8%82%E5%80%BC&amp;action=edit\" class=\"new\" title=\"总资本，总市值\">总资本，总市值</a></td>"
+let tdEnglishString = "<td><a href=\"/w/index.php?title=%E9%80%89%E5%87%BA%E6%9C%80%E6%9C%89%E5%88%A9%E7%9A%84%EF%BC%88%E6%8A%95%E8%B5%84%E7%AD%89%EF%BC%89&amp;action=edit\" class=\"new\" title=\"选出最有利的（投资等）\">选出最有利的（投资等）</a></td>"
+//let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<" //只能匹配两个单词
+let tdEnglishPattern = ">[([(\\w+（）)，-])(\\s+)]+<"  //匹配多个单词，包含连接符（-）
 let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
-let wordPattern = "[^>].*[^<]"
-let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
+//let wordPattern = "[^>].*[^<]"
+//let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
+
+// ???
+let tdString = "<td><a href=\"/w/index.php?title=%E9%80%89%E5%87%BA%E6%9C%80%E6%9C%89%E5%88%A9%E7%9A%84%EF%BC%88%E6%8A%95%E8%B5%84%E7%AD%89%EF%BC%89&amp;action=edit\" class=\"new\" title=\"选出最有利的（投资等）\">选出最有利的（投资等）</a></td>"
+let tdPattern = "[^>][([(\\w+（）)，-])(\\s+)]+[^<]"
+let tdResult = listMatches(pattern: tdPattern, inString: tdString)
 
 // 无序去重
 var tempArray: [String] = ["a", "b", "b", "c", "d", "d"]
 var tempDic: [String: String] = [:]
 var result1: [String] = []
+//
 
 for string in tempArray {
     tempDic[string] = string
@@ -182,7 +193,7 @@ listMatches(pattern: "to\\b", inString: boundaryExample)
  \s matches whitespace characters such as spaces, tabs, and newlines. hello\s will match "hello " in "Well, hello there!".
  \s 会匹配空白字符，比如，空格，制表符，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
  */
-let whitespaceExample = "Well, helloWorld, hello there! hello! hello。。。<>《》"
+let whitespaceExample = "Well, helloWorld, hello-World, hello there! hello! hello。。。<>《》"
 listMatches(pattern: "hello\\s", inString: whitespaceExample)
 let SPattern = "hello\\S*"
 listMatches(pattern: SPattern, inString: whitespaceExample)
