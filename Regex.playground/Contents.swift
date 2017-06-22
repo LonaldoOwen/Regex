@@ -114,7 +114,7 @@ listMatches(pattern: pattern, inString: htmlString)
  . matches any character. p.p matches pop, pup, pmp, p@p, and so on.
  ".":可以匹配任何字符。不能匹配换行符\n
  */
-let anyExample = "pip, pop, p%p, paap, piip, puup, pippin, p匹皮批p, p p, p\np, p_p, p\\p"
+let anyExample = "pp, pip, pop, p%p, paap, piip, puup, pippin, p匹皮批p, p p, p\np, p_p, p\\p"
 listMatches(pattern: "p.p", inString: anyExample)
 
 /**
@@ -295,12 +295,14 @@ print("newtdResult: \(newtdResult)")
 //let tdEnglishString = "<td><a href=\"/w/index.php?title=%E6%80%BB%E8%B5%84%E6%9C%AC%EF%BC%8C%E6%80%BB%E5%B8%82%E5%80%BC&amp;action=edit\" class=\"new\" title=\"总资本，总市值\">总资本，总市值</a></td>"
 //let tdEnglishString = "<td><a href=\"/w/index.php?title=%E9%80%89%E5%87%BA%E6%9C%80%E6%9C%89%E5%88%A9%E7%9A%84%EF%BC%88%E6%8A%95%E8%B5%84%E7%AD%89%EF%BC%89&amp;action=edit\" class=\"new\" title=\"选出最有利的（投资等）\">选出最有利的（投资等）</a></td>"
 //let tdEnglishString = "<td>持有人、可收取<a href=\"/wiki/%E5%88%A9%E6%81%AF\" title=\"利息\">利息</a>的存款证书。存款证设有到期日、<a href=\"/wiki/%E5%9B%BA%E5%AE%9A%E5%88%A9%E7%8E%87\" title=\"固定利率\">固定利率</a>，并可以用任何<a href=\"/wiki/%E8%B4%A7%E5%B8%81\" title=\"货币\">货币</a>计价。存款证一般由<a href=\"/wiki/%E5%95%86%E4%B8%9A%E9%93%B6%E8%A1%8C\" title=\"商业银行\">商业银行</a>发行</td>"
-let tdEnglishString = "<td>CFA 协会]](CFA Institute)]](前身是AIMR(Association for Investment Management and Research)，于2004年五月正式易名)颁发的专业称号，用以证实<a href=\"/wiki/%E6%8A%95%E8%B5%84\" title=\"投资\">投资</a>专业人士的实力及<a href=\"/wiki/%E8%AF%9A%E4%BF%A1\" title=\"诚信\">诚信</a>。应考生必须通过三级考试，考核的范围包括道德与专业标准、投资工具、<a href=\"/wiki/%E8%B5%84%E4%BA%A7\" title=\"资产\">资产</a>估值及<a href=\"/wiki/%E6%8A%95%E8%B5%84%E7%BB%84%E5%90%88%E7%AE%A1%E7%90%86\" title=\"投资组合管理\">投资组合</a>管理。\n</td>"
+//let tdEnglishString = "<td>CFA 协会]](CFA Institute)]](前身是AIMR(Association for Investment Management and Research)，于2004年五月正式易名)颁发的专业称号，用以证实<a href=\"/wiki/%E6%8A%95%E8%B5%84\" title=\"投资\">投资</a>专业人士的实力及<a href=\"/wiki/%E8%AF%9A%E4%BF%A1\" title=\"诚信\">诚信</a>。应考生必须通过三级考试，考核的范围包括道德与专业标准、投资工具、<a href=\"/wiki/%E8%B5%84%E4%BA%A7\" title=\"资产\">资产</a>估值及<a href=\"/wiki/%E6%8A%95%E8%B5%84%E7%BB%84%E5%90%88%E7%AE%A1%E7%90%86\" title=\"投资组合管理\">投资组合</a>管理。\n</td>"
+//let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td><td><a href=\"/w/index.php?title=%E6%AF%8F%E6%97%A5%E4%BA%A7%E9%87%8F&amp;action=edit\" class=\"new\" title=\"每日产量\">每日产量</a>（桶）</td><td>评估石油产量的常用统计单位\n</td></tr>"
+let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td>"
 //let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<" //只能匹配两个单词
 //let tdEnglishPattern = ">[([(\\w+（）)、，-])(\\s+)]+<"  //匹配多个单词，包含连接符（-）
 //let tdEnglishPattern = ">(.*?)<" // 匹配'><'之间的所有字符(不含换行\n,)(包含><)
-//let tdEnglishPattern = "(?<=>)(.*?)(?=<)" // 匹配'><'之间的所有字符(不含换行\n,)(不包含><,)
-let tdEnglishPattern = "(?<=>).*?(?=<)|(?<=>).*?(?=\\n)" //匹配'><'或'>\n'之间的所有字符(不包含><,>\n)
+let tdEnglishPattern = "(?<=>)(.*?)(?=<)" // 匹配'><'之间的所有字符(不含换行\n,)(不包含><,)
+//let tdEnglishPattern = "(?<=>).*?(?=<)|(?<=>).*?(?=\\n)" //匹配'><'或'>\n'之间的所有字符(不包含><,>\n)
 let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
 //let wordPattern = "[^>].*[^<]"
 //let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
