@@ -111,13 +111,6 @@ listMatches(pattern: pattern, inString: htmlString)
 
 //, MARK: Cheat Sheet
 /**
- . matches any character. p.p matches pop, pup, pmp, p@p, and so on.
- ".":可以匹配任何字符。不能匹配换行符\n
- */
-let anyExample = "pp, pip, pop, p%p, paap, piip, puup, pippin, p匹皮批p, p p, p\np, p_p, p\\p"
-listMatches(pattern: "p.p", inString: anyExample)
-
-/**
  \w matches any 'word-like' character which includes the set of numbers, letters, and underscore, but does not match punctuation or other symbols. hello\w will match "hello_9" and "helloo" but not "hello!"
  "\w":匹配任何字母类型的字符，包括：数字、字母、下划线，不包括：标点符号或其他符号；
  */
@@ -138,11 +131,13 @@ listMatches(pattern: "\\d?\\d:\\d\\d", inString: digitExample)
 let boundaryExample = "to the moon! when to go? tomorrow? to!"
 listMatches(pattern: "to\\b", inString: boundaryExample)
 
+listMatches(pattern: "to the\\b", inString: boundaryExample)
+
 /**
  \s matches whitespace characters such as spaces, tabs, and newlines. hello\s will match "hello " in "Well, hello there!".
- \s 会匹配空白字符，比如，空格，制表符，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
+ \s 会匹配空白字符，比如，空格，制表符(tab)，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
  */
-let whitespaceExample = "Well, helloWorld, hello-World, hello there! hello! hello。。。<>《》hello\n"
+let whitespaceExample = "Well, helloWorld, hello-World, hello there!, hello!, hello。。。<>《》, hello\n, hello<>, hello "
 listMatches(pattern: "hello\\s", inString: whitespaceExample)
 let SPattern = "hello\\S*"
 listMatches(pattern: SPattern, inString: whitespaceExample)
@@ -154,9 +149,18 @@ listMatches(pattern: sSStarPattern, inString: whitespaceExample)
 /**
  ^ matches at the beginning of a line. Note that this particular ^ is different from ^ inside of the square brackets! For example, ^Hello will match against the string "Hello there", but not "He said Hello".
  ^用在一行的开始。记住，这个特殊的^不同于方括号中的^（[^]）!例如，^Hello 会匹配字符串“Hello there”，而不会去匹配“He said Hello”。
+ [^] 表示不包含的字符，如：[^He]表示不包含“H”或“E”
  */
-let beginningExample = "Hello there! He said hello."
+let beginningExample = "Hello there! He said hello. (Hello)"
 highlightMatches(pattern: "^Hello", inString: beginningExample)
+
+highlightMatches(pattern: "[^He]", inString: beginningExample)
+
+highlightMatches(pattern: "[^Hello]", inString: beginningExample)
+
+highlightMatches(pattern: "[^(Hello)]", inString: beginningExample)
+
+highlightMatches(pattern: "^(Hello)", inString: beginningExample)
 
 /**
  $ matches at the end of a line. For example, the end$ will match against "It was the end" but not "the end was near"
@@ -164,6 +168,14 @@ highlightMatches(pattern: "^Hello", inString: beginningExample)
  */
 let endExample = "The end was near. It was the end"
 highlightMatches(pattern: "end$", inString: endExample)
+
+/**
+ . matches any character. p.p matches pop, pup, pmp, p@p, and so on.
+ ".":可以匹配任何字符。不能匹配换行符\n
+ */
+let anyExample = "pp, pip, pop, p%p, paap, piip, puup, pippin, p匹皮批p, p p, p\np, p_p, p\\p"
+listMatches(pattern: "p.p", inString: anyExample)
+
 
 /**
  * matches the previous element 0 or more times. 12*3 will match 13, 123, 1223, 122223, and 1222222223.
@@ -186,6 +198,16 @@ highlightMatches(pattern: "12+3", inString: oneOrMoreExample)
 let possibleExample = "13, 123, 1223"
 highlightMatches(pattern: "12?3", inString: oneOrMoreExample)
 
+// (.*?)用法
+/**
+ 
+ */
+// 不能匹配包含换行符（\n）
+listMatches(pattern: "abc(.*?)abc", inString: "abc123egfabc45677abc")
+listMatches(pattern: "abc(.*?)abc", inString: "abc\n123egfabc45677abc")
+// 可以匹配任何字符，包含换行符（\n）
+listMatches(pattern: "abc([\\s\\S]*?)abc", inString: "abc\n123egfabc45677abc")
+
 /**
  Curly braces { } contain the minimum and maximum number of matches. For example, 10{1,2}1 will match both "101" and "1001" but not "10001" as the minimum number of matches is 1 and the maximum number of matches is 2. He[Ll]{2,}o will match "HeLLo" and "HellLLLllo" and any such silly variation of "hello" with lots of L’s, since the minimum number of matches is 2 but the maximum number of matches is not set — and therefore unlimited!
  */
@@ -193,6 +215,7 @@ let numberExample1 = "101 1001 10001"
 let numberExample2 = "HeLLo HellLLLllo"
 highlightMatches(pattern: "10{1,2}1", inString: numberExample1)
 highlightMatches(pattern: "He[Ll]{2,}", inString: numberExample2)
+highlightMatches(pattern: "10{2,2}1", inString: numberExample1)
 
 /**
  Capturing parentheses ( ) are used to group part of a pattern. For example, 3 (pm|am) would match the text "3 pm" as well as the text "3 am". The pipe character here (|) acts like an OR operator.
@@ -244,20 +267,30 @@ listMatches(pattern: "t[^oa]m", inString: notClasses)
 
 
 ///
+/**
+ 
+ */
 // 不带换行的html标签
 //let tableString = "<p>This is an example <strong>html</strong> string.</p>"
-let tableString = "<table class=\"wikitable\">        <tr>abc</tr>This is an example <strong>html</strong> string.</table>;<strong>html</strong>"
+let tableString = "<table class=\"wikitable\">        <tr>abc<table>123</table></tr>This is an example <strong>html</strong> string.</table>;<strong>html</strong>"
 // 带换行的html 标签
 //let tableString = "<tr>\n<th>英文术语</th><th>中文翻译</th><th>详细解释\n</th></tr>"
-let tablePattern = "<([a-z][a-z0-9]*)\\b[^>]*>(.*?)</\\1>"
-//let tablePattern = "<(table)*\\b[^>]*>\\s(.*?)</\\1>"
-//let tablePattern = "<(table)[^>]*>(.*?)</\\1>"
-//let tablePattern = "<(table)\\b class=\"wikitable\">"
+let tablePattern = "<(table)*\\b[^>]*>\\s(.*?)</\\1>"
+listMatches(pattern: tablePattern, inString: tableString)
+
 /* 注意html标签是有换行的（\n），正则匹配时要注意 */
 //let trPattern = "<(tr)>([\\s\\S]*?)</\\1>"
 let trPattern = ">(.+?)<"
-listMatches(pattern: tablePattern, inString: tableString)
+listMatches(pattern: "<([a-z][a-z0-9]*)\\b[^>]*>(.*?)</\\1>", inString: tableString)
+listMatches(pattern: "<(table)*\\b[^>]*>\\s(.*?)</\\1>((.*?)</table>)*", inString: tableString)
 
+listMatches(pattern: "<(table)[^>]*>(.*?)</\\1>", inString: tableString)
+listMatches(pattern: "<(table)\\b class=\"wikitable\">", inString: tableString)
+// 匹配两个字符串str1、str2间的所有字符，只匹配str2第一次出现时的内容
+listMatches(pattern: "abc(.*?)efg", inString: "abc1245efg44445efgb")
+// 匹配两个字符串str1、str2间的所有字符，匹配str2最后一次出现时的所有内容
+listMatches(pattern: "abc(.*?)efg((.*?)efg)*", inString: "abc1245efg4efg4abc4efg45efgb")
+listMatches(pattern: "<tr>(.*?)</tr>", inString: "<tr>abc,<tr>123</tr>dsfs</tr>")
 
 
 // 处理第二个td
@@ -280,14 +313,18 @@ let tdExplainString = "<td>实现<a href=\"/wiki/%E5%88%A9%E6%B6%A6\" title=\"�
 //let tdPattern = "<(\\S*?)[^>]*>.*?</>|<.*? />"
 //let tdExplainPattern = "[\u{4e00}-\u{9fa5}]+([，。、；]*)[\u{4e00}-\u{9fa5}]+" // 匹配中文+标点符号
 let tdExplainPattern = "(?<=>).*?(?=<)|(?<=>).*?(?=\\n)"
-let tdExplainResult = listMatches(pattern: tdExplainPattern, inString: tdExplainString)
-var newtdResult: [String] = []
-for string in tdExplainResult {
-    if newtdResult.contains(string) == false {
-        newtdResult.append(string)
-    }
-}
-print("newtdResult: \(newtdResult)")
+
+listMatches(pattern: "<([a-z][a-z0-9]*)\\b[^>]*>([\u{4e00}-\u{9fa5}]+)</\\1>", inString: tdExplainString)
+listMatches(pattern: "<(\\S*?)[^>]*>.*?</>|<.*? />", inString: tdExplainString)
+listMatches(pattern: "[\u{4e00}-\u{9fa5}]+([，。、；]*)[\u{4e00}-\u{9fa5}]+", inString: tdExplainString)
+listMatches(pattern: tdExplainPattern, inString: tdExplainString)
+//var newtdResult: [String] = []
+//for string in tdExplainResult {
+//    if newtdResult.contains(string) == false {
+//        newtdResult.append(string)
+//    }
+//}
+//print("newtdResult: \(newtdResult)")
 
 // 处理第一个td
 //let tdEnglishString = "<td><a href=\"/w/index.php?title=CEDEL&amp;action=edit\" class=\"new\" title=\"CEDEL\">CEDEL</a></td>"
@@ -296,16 +333,77 @@ print("newtdResult: \(newtdResult)")
 //let tdEnglishString = "<td><a href=\"/w/index.php?title=%E9%80%89%E5%87%BA%E6%9C%80%E6%9C%89%E5%88%A9%E7%9A%84%EF%BC%88%E6%8A%95%E8%B5%84%E7%AD%89%EF%BC%89&amp;action=edit\" class=\"new\" title=\"选出最有利的（投资等）\">选出最有利的（投资等）</a></td>"
 //let tdEnglishString = "<td>持有人、可收取<a href=\"/wiki/%E5%88%A9%E6%81%AF\" title=\"利息\">利息</a>的存款证书。存款证设有到期日、<a href=\"/wiki/%E5%9B%BA%E5%AE%9A%E5%88%A9%E7%8E%87\" title=\"固定利率\">固定利率</a>，并可以用任何<a href=\"/wiki/%E8%B4%A7%E5%B8%81\" title=\"货币\">货币</a>计价。存款证一般由<a href=\"/wiki/%E5%95%86%E4%B8%9A%E9%93%B6%E8%A1%8C\" title=\"商业银行\">商业银行</a>发行</td>"
 //let tdEnglishString = "<td>CFA 协会]](CFA Institute)]](前身是AIMR(Association for Investment Management and Research)，于2004年五月正式易名)颁发的专业称号，用以证实<a href=\"/wiki/%E6%8A%95%E8%B5%84\" title=\"投资\">投资</a>专业人士的实力及<a href=\"/wiki/%E8%AF%9A%E4%BF%A1\" title=\"诚信\">诚信</a>。应考生必须通过三级考试，考核的范围包括道德与专业标准、投资工具、<a href=\"/wiki/%E8%B5%84%E4%BA%A7\" title=\"资产\">资产</a>估值及<a href=\"/wiki/%E6%8A%95%E8%B5%84%E7%BB%84%E5%90%88%E7%AE%A1%E7%90%86\" title=\"投资组合管理\">投资组合</a>管理。\n</td>"
-//let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td><td><a href=\"/w/index.php?title=%E6%AF%8F%E6%97%A5%E4%BA%A7%E9%87%8F&amp;action=edit\" class=\"new\" title=\"每日产量\">每日产量</a>（桶）</td><td>评估石油产量的常用统计单位\n</td></tr>"
-let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td>"
+let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td><td><a href=\"/w/index.php?title=%E6%AF%8F%E6%97%A5%E4%BA%A7%E9%87%8F&amp;action=edit\" class=\"new\" title=\"每日产量\">每日产量</a>（桶）</td><td>评估石油产量的常用统计单位\n</td></tr>"
+//let tdEnglishString = "<tr>\n<td><a href=\"/w/index.php?title=Barrel%27s_per_Day&amp;action=edit\" class=\"new\" title=\"Barrel's per Day\">Barrel's per Day</a></td>"
 //let tdEnglishPattern = ">(\\w+)(\\s+)?(\\w+)<" //只能匹配两个单词
 //let tdEnglishPattern = ">[([(\\w+（）)、，-])(\\s+)]+<"  //匹配多个单词，包含连接符（-）
 //let tdEnglishPattern = ">(.*?)<" // 匹配'><'之间的所有字符(不含换行\n,)(包含><)
 let tdEnglishPattern = "(?<=>)(.*?)(?=<)" // 匹配'><'之间的所有字符(不含换行\n,)(不包含><,)
 //let tdEnglishPattern = "(?<=>).*?(?=<)|(?<=>).*?(?=\\n)" //匹配'><'或'>\n'之间的所有字符(不包含><,>\n)
 let tdEnglishResult = listMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
+highlightMatches(pattern: tdEnglishPattern, inString: tdEnglishString)
+listMatches(pattern: ">(\\w+)(\\s+)?(\\w+)<", inString: tdEnglishString)
+listMatches(pattern: ">[([(\\w+（）)、，-])(\\s+)]+<", inString:tdEnglishString)
+listMatches(pattern: ">(.*?)<", inString: tdEnglishString)
+listMatches(pattern: "(?<=>).*?(?=<)|(?<=>).*?(?=\\n)", inString: tdEnglishString)
+
 //let wordPattern = "[^>].*[^<]"
 //let wordResult = listMatches(pattern: wordPattern, inString: tdEnglishResult[0])
+
+listMatches(pattern: "<td>([\\s\\S]*?)(<table>[\\s\\S].*?</table>)</td>", inString: "<td>12345\n<table>abc<td>xyz</td></table></td>")
+listMatches(pattern: "<td>([\\s\\S]*?)(<table>[\\s\\S].*?</table>)*</td>", inString: "<td>\n1234, <td>12345\n<table>abc<td>xyz</td></table></td>9876</td>")
+listMatches(pattern: "<td>([\\s\\S]*)</td>", inString: "<td>\n1234, <td>12345\n<table>abc<td>xyz</td></table></td>9876</td>") // ()* 非懒惰模式，
+listMatches(pattern: "<td>([\\s\\S]*?)</td>", inString: "<td>\n1234, <td>12345\n<table>abc<td>xyz</td></table></td>9876</td>") // ()*? 懒惰模式，匹配尽量少的次数
+listMatches(pattern: "<tr>\n(<td>([\\s\\S]*?)(<table>[\\s\\S].*?</table>)</td>)</tr>", inString: "<tr>\n<td>td1</td><td>td2</td><td>td3\n<table>abc<td>xyz</td></table></td></tr>")
+listMatches(pattern: "<tr>((<td>([\\s\\S]*?)</td>){3,3})</tr>", inString: "<tr><td>td1</td><td>td2</td><td>td3</td></tr>")
+listMatches(pattern: "<tr>\n(<td>[([\\s\\S]*?)(<table>[\\s\\S].*?</table>)</td>])</tr>", inString: "<tr>\n<td>td1</td><td>td2</td><td>td3</td></tr>")
+
+// 嵌套HTML标签匹配
+// "<(?<HtmlTag>[\\w]+)[^>]*\\s[^>]*>((?<Nested><\\k<HtmlTag>[^>]*>)|</\\k<HtmlTag>>(?<-Nested>)|.*?)*</\\k<HtmlTag>>"
+// "<(?<HtmlTag>td)>(.*?)</\\1<HtmlTag>>"
+
+// Backreferences \1
+listMatches(pattern: "<(td)>(.*?)</\\1>", inString: "<td>1234, </td>")
+// Named Groups and Backreferences
+listMatches(pattern: "<(?<HtmlTag>td)>(.*?)</\\k<HtmlTag>>", inString: "<td>1234, </td>")
+//listMatches(pattern: "<(?'HtmlTag'td)>(.*?)</\\k'HtmlTag'>", inString: "<td>1234, </td>")
+//listMatches(pattern: "<(?<HtmlTag>tr)>((?<Nested><\\k<HtmlTag>)|</\\k<HtmlTag>>(?<-Nested>)|.*?)*</\\k<HtmlTag>>", inString: "<tr><td>1234,<tr>999</tr> </td></tr>")
+listMatches(pattern: "<(?<HtmlTag>tr)>(?<Nested><\\k<HtmlTag>)</\\k<HtmlTag>>(?-<Nested>)</\\k<HtmlTag>>", inString: "<tr><td><tr></tr></td></tr>")
+//listMatches(pattern: "<(?<HtmlTag>[\\w]+)[^>]*\\s[^>]*>((?<Nested><\\k<HtmlTag>[^>]*>)|</\\k<HtmlTag>>(?<N-Nested>)|.*?)*</\\k<HtmlTag>>", inString: "<tr><td><tr></tr></td></tr>")
+
+
+
+
+
+
+// () capturing group 捕获 组
+/**
+ 普通捕获组的情况下，捕获组的编号是按照“(”出现的顺序，从左到右，从1开始进行编号的,0表示的是整个 
+ (\d{4})-(\d{2}-(\d\d))
+ 那么分组的编号是
+ 0 (\d{4})-(\d{2}-(\d\d))
+ 1 (\d{4})
+ 2 (\d{2}-(\d\d))
+ 3 (\d\d)
+ */
+listMatches(pattern: "<((tr)|(td))>(.*?)</\\3>", inString: "<tr>abc<td>1234, </td></tr>")
+
+//listMatches(pattern: "<((tr)|(td))>(.*?)</$3>", inString: "<tr>abc<td>1234, </td></tr>")
+listMatches(pattern: "^(\\w+\\s+ID:\\s+)(\\d{3})-(\\d{4})$", inString: "Bob ID: 143-5546")
+replaceMatches(pattern: "^(\\w+\\s+ID:\\s+)(\\d{3})-(\\d{4})$", inString: "Bob ID: 143-5546", withString: "$1$3 -- $2-----$2") // $ 引用捕获的内容
+replaceMatches(pattern: "(<tr>)(<td>)(<p>)", inString: "<tr><td><p>", withString: "$3$2$1")
+
+listMatches(pattern: "(abc)", inString: "abc123abc456")
+
+listMatches(pattern: "(?:abc)", inString: "abc123abc456")
+
+//
+listMatches(pattern: "Set(Value)?", inString: "Set, SetValue, set")
+replaceMatches(pattern: "Set(Value)?", inString: "Set, SetValue, set", withString: "$1")
+listMatches(pattern: "Set(?:Value)?", inString: "Set, SetValue, set")
+replaceMatches(pattern: "Set(?:Value)?", inString: "Set, SetValue, set", withString: "$1")
+
+
 
 // ???
 /**
@@ -320,9 +418,12 @@ let tdString = ">及<"
 let tdPattern = "(?<=>).*(?=<)" //
 var tdResult = listMatches(pattern: tdPattern, inString: tdString)
 
-tdResult = listMatches(pattern: "(?=>).{1,2}", inString: ">abcd<")
+listMatches(pattern: "[^>][([(\\w+（）)，-])(\\s+)]+[^<]", inString: tdString)
+listMatches(pattern: "[^>].*[^<]", inString: tdString)
 
-tdResult = listMatches(pattern: "(?!>).{1,2}", inString: ">abcd<")
+listMatches(pattern: "(?=>).{1,2}", inString: ">abcd<")
+
+listMatches(pattern: "(?!>).{1,2}", inString: ">abcd<")
 
 
 /// 数组去重
