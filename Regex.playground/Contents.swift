@@ -218,8 +218,8 @@ highlightMatches(pattern: "He[Ll]{2,}", inString: numberExample2)
 highlightMatches(pattern: "10{2,2}1", inString: numberExample1)
 
 /**
- Capturing parentheses ( ) are used to group part of a pattern. For example, 3 (pm|am) would match the text "3 pm" as well as the text "3 am". The pipe character here (|) acts like an OR operator.
- 截获圆括号（capturing parentheses） 被用作组模式的一部分。例如：3 (pm|am)会匹配文本“3 pm” ,也会匹配“3 am”。竖线字符（|）执行的是或操作。
+ () Capturing parentheses ( ) are used to group part of a pattern. For example, 3 (pm|am) would match the text "3 pm" as well as the text "3 am". The pipe character here (|) acts like an OR operator.
+ () 截获圆括号（capturing parentheses） 被用作组模式的一部分。例如：3 (pm|am)会匹配文本“3 pm” ,也会匹配“3 am”。竖线字符（|）执行的是或操作。
  当你需要选择性的匹配特定的字符串时，圆括号组用起来很方便。比方说你要在一个文本中查找“November”，但是它可能被简写为“Nov”.你就能定义一个模式 Nov(ember)?,在捕获圆括号（capturing parentheses）后加上问号，意味着这个圆括号内的内容是可选的。
  */
 let cinema = "Are we going to the cinema at 3 am or 5 pm?"
@@ -241,8 +241,8 @@ listMatches(pattern: "(Tom|Dick|Harry)", inString: greeting)
 replaceMatches(pattern: "(Tom|Dick|Harry)", inString: greeting, withString: "James")
 
 /**
- Character classes represent a set of possible single-character matches. Character classes appear between square brackets [ ]. As an example, the regular expression t[aeiou] will match "ta", "te", "ti", "to", or "tu". You can have as many character possibilities inside the square brackets as you like, but remember that any single character in the set will match. [aeiou] looks like five characters, but it actually means "a" or "e" or "i" or "o" or "u".
- 字符组（Character classes）相当于一组字符中匹配单个字符。字符组出现在中括号（[ 和 ]）之间。
+ [] Character classes represent a set of possible single-character matches. Character classes appear between square brackets [ ]. As an example, the regular expression t[aeiou] will match "ta", "te", "ti", "to", or "tu". You can have as many character possibilities inside the square brackets as you like, but remember that any single character in the set will match. [aeiou] looks like five characters, but it actually means "a" or "e" or "i" or "o" or "u".
+ [] 字符组（Character classes）相当于一组字符中匹配单个字符。字符组出现在中括号（[ 和 ]）之间。
  
  例如，正则表达式 t[aeiou]会匹配“ta”、“te”、“ti”、“to”或“tu”。你可以放任意多的字符在中括号中，但是请记住，只能匹配一个字符。[aeiou]看起来是五个字符，但它真实意义却是“a”或”e“或”i“或”o“或”u“。
  */
@@ -368,8 +368,9 @@ listMatches(pattern: "<(td)>(.*?)</\\1>", inString: "<td>1234, </td>")
 listMatches(pattern: "<(?<HtmlTag>td)>(.*?)</\\k<HtmlTag>>", inString: "<td>1234, </td>")
 //listMatches(pattern: "<(?'HtmlTag'td)>(.*?)</\\k'HtmlTag'>", inString: "<td>1234, </td>")
 //listMatches(pattern: "<(?<HtmlTag>tr)>((?<Nested><\\k<HtmlTag>)|</\\k<HtmlTag>>(?<-Nested>)|.*?)*</\\k<HtmlTag>>", inString: "<tr><td>1234,<tr>999</tr> </td></tr>")
-listMatches(pattern: "<(?<HtmlTag>tr)>(?<Nested><\\k<HtmlTag>)</\\k<HtmlTag>>(?-<Nested>)</\\k<HtmlTag>>", inString: "<tr><td><tr></tr></td></tr>")
+//listMatches(pattern: "<(?<HtmlTag>tr)>(?<Nested><\\k<HtmlTag>)</\\k<HtmlTag>>(?-<Nested>)</\\k<HtmlTag>>", inString: "<tr><td><tr></tr></td></tr>")
 //listMatches(pattern: "<(?<HtmlTag>[\\w]+)[^>]*\\s[^>]*>((?<Nested><\\k<HtmlTag>[^>]*>)|</\\k<HtmlTag>>(?<N-Nested>)|.*?)*</\\k<HtmlTag>>", inString: "<tr><td><tr></tr></td></tr>")
+
 
 
 
@@ -402,6 +403,15 @@ listMatches(pattern: "Set(Value)?", inString: "Set, SetValue, set")
 replaceMatches(pattern: "Set(Value)?", inString: "Set, SetValue, set", withString: "$1")
 listMatches(pattern: "Set(?:Value)?", inString: "Set, SetValue, set")
 replaceMatches(pattern: "Set(?:Value)?", inString: "Set, SetValue, set", withString: "$1")
+
+listMatches(pattern: "(?i:TEST)", inString: "test")
+listMatches(pattern: "(?-i:TEST)", inString: "test")
+
+// http://blog.csdn.net/wanglei19880622/article/details/7204492
+// https://www.crifan.com/files/doc/docbook/regular_expression/release/html/regular_expression.html#how_cal_group_index_for_embedded_parentheses
+listMatches(pattern: "a((?<o>a)|(?<-o>b)|[^ab]+)+b", inString: "xxxxaxxaxxaxxbxxbxxbxxxx")
+
+
 
 
 
