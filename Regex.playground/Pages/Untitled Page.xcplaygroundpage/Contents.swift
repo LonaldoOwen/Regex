@@ -155,7 +155,7 @@ listMatches(pattern: "(?-i:TEST)", inString: "test")
 
 // http://blog.csdn.net/wanglei19880622/article/details/7204492
 // https://www.crifan.com/files/doc/docbook/regular_expression/release/html/regular_expression.html#how_cal_group_index_for_embedded_parentheses
-listMatches(pattern: "a((?<o>a)|(?<-o>b)|[^ab]+)+b", inString: "xxxxaxxaxxaxxbxxbxxbxxxx")
+//listMatches(pattern: "a((?<o>a)|(?<-o>b)|[^ab]+)+b", inString: "xxxxaxxaxxaxxbxxbxxbxxxx")
 
 
 

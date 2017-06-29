@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-/// Regular Expression
+/// Regular Expression--helper method
 
 // 匹配字符串并高亮显示
 public func highlightMatches(pattern: String, inString string: String) -> NSAttributedString {
