@@ -2,9 +2,13 @@
 
 /*: 
  # Cheat Sheet
- matches any 'word-like' character which
  
- 匹配任何字母类型的字符，包括
+ //速记理解技巧
+ . [ ] ^ $
+ 四个字符是所有语言都支持的正则表达式，所以这个四个是基础的正则表达式。正则难理解因为里面有一个等价的概念，这个概念大大增加了理解难度，让很多初学者看起来会蒙，如果把等价都恢复成原始写法，自己书写正则就超级简单了，就像说话一样去写你的正则了：
+ ## 参考
+ * [ICU Regular Expressions](http://userguide.icu-project.org/strings/regexp)
+ * [regular-expressions.info](regular-expressions.info)
  
  ## 二级标题
  matches any 'word-like' character which
@@ -14,11 +18,8 @@
  matches any 'word-like' character which
  匹配任何字母类型的字符，包括
 */
-
-
-
 /*:
- ### # \w 匹配任何字符
+ ### # \w=[A-Za-z_0-9] 匹配任何字母类的字符
  \w matches any 'word-like' character which includes the set of numbers, letters, and underscore, but does not match punctuation or other symbols. hello\w will match "hello_9" and "helloo" but not "hello!"
  
  "\w":匹配任何字母类型的字符，包括：数字、字母、下划线，不包括：标点符号或其他符号；
@@ -27,7 +28,7 @@ let wordExample = "hello , helloooooo, hello_1114, hello, hello!"
 listMatches(pattern: "hello\\w+", inString: wordExample)
 
 /*:
- ### # \d
+ ### # \d=[0-9]
  \d matches a numeric digit, which in most cases means [0-9]. \d\d?:\d\d will match strings in time format, such as "9:30" and "12:45".
  
  \d 匹配数字，大部分情况下是[0-9]。\d\d?:\d\d会匹配时间格式的字符串，比如”9：30“和”12：45“。
@@ -39,31 +40,32 @@ listMatches(pattern: "\\d?\\d:\\d\\d", inString: digitExample)
  ### # \b
  \b matches word boundary characters such as spaces and punctuation. to\b will match the "to" in "to the moon" and "to!", but it will not match "tomorrow". \b is handy for "whole word" type matching.
  
- \b 匹配额外的字符，例如空格，标点符号。to\b 会匹配”to the moon”和“to!”中得“to”,但是不会匹配“tomorrow”。\b 用在整个单词的匹配方面和方便。
+ \b 匹配字边界的字符，例如空格，标点符号。to\b 会匹配”to the moon”和“to!”中得“to”,但是不会匹配“tomorrow”。\b 用在整个单词的匹配方面和方便。
  */
-let boundaryExample = "to the moon! when to go? tomorrow? to!"
+let boundaryExample = "to the moon! when to go? tomorrow? to!, to_do, to-go"
+highlightMatches(pattern: "to\\b", inString: boundaryExample)
 listMatches(pattern: "to\\b", inString: boundaryExample)
 
 listMatches(pattern: "to the\\b", inString: boundaryExample)
 
 /*:
- ### \s
+ ### # \s
  \s matches whitespace characters such as spaces, tabs, and newlines. hello\s will match "hello " in "Well, hello there!".
  
- \s 会匹配空白字符，比如，空格，制表符(tab)，换行符。hello\s 会匹配“Well,hello there!”中的 “hello ”。
+ \s 会匹配空白字符，比如，空格，制表符(tab)，换行符(\n)。hello\s 会匹配“Well,hello there!”中的 “hello ”。
  */
 let whitespaceExample = "Well, helloWorld, hello-World, hello there!, hello!, hello。。。<>《》, hello\n, hello<>, hello "
 listMatches(pattern: "hello\\s", inString: whitespaceExample)
-var SPattern = "hello\\S*"
-listMatches(pattern: SPattern, inString: whitespaceExample)
-let sSPattern = "hello\\s\\S"
-listMatches(pattern: sSPattern, inString: whitespaceExample)
-let sSStarPattern = "[\\s\\S]*"
-listMatches(pattern: sSStarPattern, inString: whitespaceExample)
-SPattern = "[\\s\\S]+"
-listMatches(pattern: SPattern, inString: whitespaceExample)
+
+listMatches(pattern: "hello\\S*", inString: whitespaceExample)
+
+listMatches(pattern: "hello\\s\\S", inString: whitespaceExample)
+
+listMatches(pattern: "[\\s\\S]*", inString: whitespaceExample)
+
+listMatches(pattern: "[\\s\\S]+", inString: whitespaceExample)
 /*:
- ### ^
+ ### # ^
  ^ matches at the beginning of a line. Note that this particular ^ is different from ^ inside of the square brackets! For example, ^Hello will match against the string "Hello there", but not "He said Hello".
  
  ^用在一行的开始。记住，这个特殊的^不同于方括号中的^（[^]）!例如，^Hello 会匹配字符串“Hello there”，而不会去匹配“He said Hello”。
@@ -111,25 +113,31 @@ highlightMatches(pattern: "12*3", inString: zeroOrMoreExample)
 highlightMatches(pattern: "12{0,}3", inString: zeroOrMoreExample)
 
 /*:
- ### # +
+ ### # +={1,}
  + matches the previous element 1 or more times. 12+3 will match 123, 1223, 122223, 1222222223, but not 13.
  + 匹配 它之前的元素1次或多次. 12+3  会匹配  123, 1223, 122223, 和 1222222223。
  */
 let oneOrMoreExample = "13, 123, 1223, 122223, 1222222223, 143222343"
 highlightMatches(pattern: "12+3", inString: oneOrMoreExample)
+highlightMatches(pattern: "12{1,}3", inString: oneOrMoreExample)
 
 /*:
- ### # ?
+ ### # ?={0,1}
  ? matches the previous element 0 or 1 times. 12?3 will match 13 or 123, but not 1223.
  
  */
 let possibleExample = "13, 123, 1223"
 highlightMatches(pattern: "12?3", inString: oneOrMoreExample)
+highlightMatches(pattern: "12{0,1}3", inString: oneOrMoreExample)
 
 // (.*?)用法
 /**
  
  */
+highlightMatches(pattern: "12(.*)3", inString: oneOrMoreExample)
+listMatches(pattern: "12(.*)3", inString: oneOrMoreExample)
+highlightMatches(pattern: "12(.*?)3", inString: oneOrMoreExample)
+
 // 不能匹配包含换行符（\n）
 listMatches(pattern: "abc(.*?)abc", inString: "abc123egfabc45677abc")
 listMatches(pattern: "abc(.*?)abc", inString: "abc\n123egfabc45677abc")
@@ -183,7 +191,9 @@ replaceMatches(pattern: "(Tom|Dick|Harry)", inString: greeting, withString: "Jam
 let theVowels = "ta te ti to tu th tj tk tm"
 listMatches(pattern: "t[aeiou]", inString: theVowels)
 
-/**
+/*:
+ \# [m-n]
+ 
  You can also define a range in a character class if the characters appear consecutively. For example, to search for a number between 100 to 109, the pattern would be 10[0-9]. This returns the same results as 10[0123456789], but using ranges makes your regular expressions much cleaner and easier to understand. Ranges can also be used for characters - for example, [a-z] matches all lowercase characters, or [a-zA-Z] matches all upper and lower case.
  如果字符连续出现，你也能在字符组中定义一个范围。例如，为了搜索在100到109的数字，模式应该用10[0-9]。这和10[0123456789]会返回同样地结果，不过，使用范围来定义你的正则表达式看起来更简洁和易于理解。
  字符组不止局限于数字，你同样可以用字符来这样做。比如，[a-f]会匹配”a“，”b“，”c“，”d“，”e“或”f“。
@@ -192,11 +202,15 @@ let theNumbers = "100 101 105 121 229 816"
 listMatches(pattern: "10[0-9]", inString: theNumbers)
 listMatches(pattern: "t[a-h]", inString: theVowels)
 
-/**
+/*:
+ \# [^x]
+ 
  Character classes usually contain the characters you want to match, but what if you want to explicitly not match a character? You can also define negated character classes, which use the ^ character. For example, the pattern t[^o] will match any combination of "t" and one other character except for the single instance of "to".
  字符集通常包含你想要匹配的字符，但是如果你想明确指出不要匹配的字符该怎么办？同样你能定义除此之外的字符组，把^放在前面。例如，模式t[^o]就会匹配包含”t“并且后面紧跟的字符是非o的字符。
  */
 let notClasses = "tim tam tum tom tem"
 listMatches(pattern: "t[^oa]m", inString: notClasses)
+
+
 
 //: [Next](@next)

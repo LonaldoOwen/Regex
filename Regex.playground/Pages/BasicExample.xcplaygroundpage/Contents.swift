@@ -24,6 +24,18 @@ let chineseString = "美国,日本,澳大利亚,中国,俄罗斯,中国龙,阿�
 let chinesePattern = "(\\w)*中国(\\w)*"
 listMatches(pattern: chinesePattern, inString: chineseString)
 
+/*:
+ ### #手机号
+ 
+ */
+highlightMatches(pattern: "1[387][0-9]{9}", inString: "12345131555512349999186000011118888")
+
+/*:
+ ### #邮箱
+ 
+ */
+highlightMatches(pattern: "[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+", inString: "123chenty@cct.cn, 123@qq.com, 456_abc@sina.com.cn, 4444")
+
 /*: 
  ### #matches an HTML or XML tag:
  This one matches an HTML or XML tag:
@@ -43,6 +55,14 @@ let pattern = "<([a-z][a-z0-9]*)\\b[^>]*>(.*?)</\\1>"  // 匹配任意html tag
 //let trPattern = ">(.+?)<"
 listMatches(pattern: pattern, inString: htmlStringWithEnter)
 listMatches(pattern: pattern, inString: htmlString)
+
+/*:
+ ### #不包含某字符串
+ 
+ */
+listMatches(pattern: "or", inString: "matches an HTML or XML tag")
+listMatches(pattern: "(.+)", inString: "how to matches an HTML or XML tag")
+
 
 
 //: [Next](@next)
